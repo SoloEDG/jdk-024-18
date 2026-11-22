@@ -9,6 +9,8 @@ import {
   ArrowUpRight,
   X,
   Compass,
+  NotebookPen,
+  Microscope,
 } from "lucide-react";
 import { isBusy } from "../shared/initial";
 import { WaterPanel, WaterConditions, water } from "../features/waters";
@@ -16,6 +18,7 @@ import { BaitPanel, RigPanel } from "../features/tackle";
 import { LakeScene, FishingPanel } from "../features/fishing";
 import { CollectionPanel } from "../features/collection";
 import { ChallengePanel, TripStats } from "../features/challenges";
+import { JournalPanel, StudyPanel } from "../features/journal";
 import { useGame } from "./useGame";
 export function App() {
   const { state, send, saved } = useGame();
@@ -45,6 +48,14 @@ export function App() {
           <a href="#collection">
             <BookOpen size={16} />
             鱼类图鉴
+          </a>
+          <a href="#journal">
+            <NotebookPen size={16} />
+            观察手记
+          </a>
+          <a href="#study">
+            <Microscope size={16} />
+            研究台
           </a>
           <a href="#challenges">
             <Flag size={16} />
@@ -140,6 +151,10 @@ export function App() {
             <TripStats doc={doc} />
           </aside>
         </div>
+        <div className="journal-workspace">
+          <JournalPanel doc={doc} send={send} />
+          <StudyPanel doc={doc} send={send} />
+        </div>
         <footer className="page-footer">
           <span>
             STILLWATER FIELD NOTES <b>·</b> EST. 2026
@@ -184,7 +199,15 @@ export function App() {
                 按住收线，把鱼带到岸边。降低力度或松手可缓解张力；松线超过五秒会脱钩。键盘可按住空格或回车收线。
               </li>
               <li>
-                收获会保存到背包和图鉴。捕获两尾解锁溪流，五尾解锁深水。放流保留图鉴记录。
+                收获会保存到背包和图鉴事实。捕获两尾解锁溪流，五尾解锁深水。放流保留图鉴记录。
+              </li>
+              <li>
+                等待、咬钩、脱钩与捕获都会写进观察手记。每一竿的等待都是样本；
+                提前收竿或错过咬钩只算不完整观察。
+              </li>
+              <li>
+                在观察手记里可压缩某些时间窗以腾出精细片段空间；压缩后只剩日期与
+                1 秒等待桶，不能再用于换饵顺序研究。研究台可随时重划条件。
               </li>
             </ol>
             <p>

@@ -6,6 +6,7 @@ export function prepareCast(
   charge: number,
   pool: { fish: FishSpecies; weight: number }[],
   delay: (roll: number) => number,
+  now: number,
 ): { session: Session; seed: number } {
   const [roll, s1] = random(doc.seed);
   const [size, s2] = random(s1);
@@ -22,6 +23,7 @@ export function prepareCast(
       spot: doc.spot,
       bait: doc.bait,
       castPower: charge,
+      castAt: now,
       fish: chosen.id,
       weight:
         Math.round((chosen.min + (chosen.max - chosen.min) * size) * 100) / 100,

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BookOpen, Backpack, ArrowUpRight } from "lucide-react";
-import type { GameDocument } from "../../../shared/types";
+import type { GameDocument, FishId } from "../../../shared/types";
 import type { Command } from "../../../shared/commands";
 import { fishCatalog, species } from "../../../shared/catalog";
 import { bagWeight } from "../lib/records";
@@ -14,15 +14,15 @@ export function CollectionPanel({
 }) {
   const [tab, setTab] = useState<"atlas" | "bag">("atlas");
   const [detail, setDetail] = useState<string | null>(null);
-  const fish = detail ? species(detail) : null;
+  const discovered = detail ? !!doc.facts[detail as FishId] : false;
+  const fish = detail && discovered ? species(detail) : null;
+  const fact = detail ? doc.facts[detail as FishId] : undefined;
   return (
     <section className="collection-panel">
       <div className="section-title">
         <BookOpen size={17} />
         <h2>湖畔图鉴</h2>
-        <span>
-          {Object.keys(doc.journal).length} / {fishCatalog.length} 已发现
-        </span>
+        <span>已发现 {Object.keys(doc.facts).length} 种</span>
       </div>
       <div className="mini-tabs">
         <button
@@ -42,6 +42,10 @@ export function CollectionPanel({
       </div>
       {tab === "atlas" ? (
         <>
+          <p className="muted atlas-note">
+            这里只记录“确实捕到过”的事实；活动范围、鱼饵偏好与等待规律，
+            请在观察手记的研究台里按条件推断。
+          </p>
           <div className="atlas-grid">
             {fishCatalog.map((f) => (
               <button
@@ -50,25 +54,44 @@ export function CollectionPanel({
                 onClick={() => setDetail(detail === f.id ? null : f.id)}
                 aria-expanded={detail === f.id}
               >
-                <FishIllustration fish={f} locked={!doc.journal[f.id]} />
-                <span>{doc.journal[f.id] ? f.name : "待发现"}</span>
+                <FishIllustration fish={f} locked={!doc.facts[f.id]} />
+                <span>{doc.facts[f.id] ? f.name : "待发现"}</span>
                 <small>
-                  {f.rarity}
+                  {doc.facts[f.id] ? f.rarity : "未记录"}
                   <ArrowUpRight size={10} />
                 </small>
               </button>
             ))}
           </div>
-          {fish && (
+          {detail && (
             <div className="fish-detail">
-              <strong>{fish.name}</strong>
-              <em>{fish.latin}</em>
-              <p>{fish.note}</p>
-              <small>
-                {doc.journal[fish.id]
-                  ? `捕获 ${doc.journal[fish.id]?.count} 尾 · 最大 ${doc.journal[fish.id]?.best.toFixed(2)} kg`
-                  : "尝试探索它偏爱的水域与鱼饵。"}
-              </small>
+              {fish && fact ? (
+                <>
+                  <strong>{fish.name}</strong>
+                  <em>{fish.latin}</em>
+                  <small className="fact-line">
+                    捕获事实 · {fact.count} 尾 · 最大 {fact.best.toFixed(2)} kg
+                    {fact.legacy
+                      ? ` · 其中 ${fact.legacy} 尾迁自旧手记，仅有捕获事实`
+                      : ""}
+                  </small>
+                  <p>
+                    这只是事实记录。它出现在哪些水域、偏好什么鱼饵、通常等多久，
+                    要从研究台里按时间窗与换饵条件推断。
+                  </p>
+                  <a className="detail-link" href="#study">
+                    去研究台查看观察推断
+                  </a>
+                </>
+              ) : (
+                <>
+                  <strong>尚未记录</strong>
+                  <p>
+                    没有捕获事实，也没有可辨认的观察。它属于哪片水域、偏好什么，
+                    请靠实际垂钓一点点写下来。
+                  </p>
+                </>
+              )}
             </div>
           )}
         </>

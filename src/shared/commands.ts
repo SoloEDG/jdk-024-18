@@ -1,4 +1,4 @@
-import type { BaitId, SpotId } from "./types";
+import type { BaitId, SpotId, StudyCriteria } from "./types";
 export type Command =
   | { type: "spot"; id: SpotId }
   | { type: "bait"; id: BaitId }
@@ -10,6 +10,10 @@ export type Command =
   | { type: "reel"; held: boolean }
   | { type: "tick"; dt: number }
   | { type: "next" }
+  | { type: "retrieve" }
   | { type: "release"; id: string }
   | { type: "claim"; id: string }
-  | { type: "resupply" };
+  | { type: "resupply" }
+  | { type: "study"; patch: Partial<StudyCriteria> }
+  | { type: "journal-policy"; policy: "coarse-new" | "compress-oldest" }
+  | { type: "compress-range"; from: number; to: number };

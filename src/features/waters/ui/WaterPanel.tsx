@@ -2,7 +2,8 @@ import { Lock, MapPin, ArrowUpRight } from "lucide-react";
 import type { Command } from "../../../shared/commands";
 import type { GameDocument } from "../../../shared/types";
 import { waters } from "../model/waters";
-import { canVisit, habitatSummary } from "../lib/habitat";
+import { canVisit } from "../lib/habitat";
+import { observedSpeciesAt } from "../../journal/model/observations";
 export function WaterPanel({
   doc,
   busy,
@@ -38,9 +39,11 @@ export function WaterPanel({
                 <small>{w.subtitle}</small>
                 <strong>{w.name}</strong>
                 <span>
-                  {open
-                    ? `${w.depth} · ${habitatSummary(w.id).count} 种鱼`
-                    : `捕获 ${w.catchesRequired} 尾后解锁`}
+                  {!open
+                    ? `捕获 ${w.catchesRequired} 尾后解锁`
+                    : observedSpeciesAt(doc, w.id) > 0
+                      ? `${w.depth} · 已辨认 ${observedSpeciesAt(doc, w.id)} 种`
+                      : `${w.depth} · 尚未辨认鱼种`}
                 </span>
               </span>
               {open ? <ArrowUpRight size={16} /> : <Lock size={14} />}

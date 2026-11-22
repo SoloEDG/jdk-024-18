@@ -6,6 +6,7 @@ export function FishIllustration({
   fish: FishSpecies;
   locked?: boolean;
 }) {
+  const fill = locked ? "#c3cec7" : fish.color;
   return (
     <svg
       viewBox="0 0 180 85"
@@ -13,15 +14,15 @@ export function FishIllustration({
       aria-label={locked ? "尚未发现的鱼种" : fish.name}
       className={"fish-art " + (locked ? "locked" : "")}
     >
-      <path d="M40 43L13 20l5 27-5 22 30-22" fill={fish.color} />
+      <path d="M40 43L13 20l5 27-5 22 30-22" fill={fill} />
       <path
         d="M51 31q25-31 44-19l15 16m-36 27 19 21 17-20"
-        fill={fish.color}
+        fill={fill}
         opacity=".8"
       />
       <path
         d="M37 44Q73 7 124 27q28 7 38 20-26 32-69 20Q54 61 37 44Z"
-        fill={fish.color}
+        fill={fill}
       />
       <path d="M45 45q50-17 105 3-50 17-105-3" fill="#f3f3de" opacity=".35" />
       <path
@@ -34,7 +35,7 @@ export function FishIllustration({
       <circle cx="140" cy="40" r="3" fill="#284943" />
       <circle cx="141" cy="39" r="1" fill="#fff" />
       <path d="M151 50h10" stroke="#49675e" strokeWidth="1.4" />
-      {fish.id === "carp" && (
+      {!locked && fish.id === "carp" && (
         <path
           d="M61 32l19 23m6-29 18 31m8-29 14 29"
           stroke="#c0714b"

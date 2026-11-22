@@ -1,7 +1,17 @@
-import type { GameDocument, Session } from "./types";
+import type { GameDocument, Session, StudyCriteria } from "./types";
+export const MAX_FINE_OBSERVATIONS = 120;
+export function defaultStudy(): StudyCriteria {
+  return {
+    start: null,
+    end: null,
+    waitMinMs: null,
+    waitMaxMs: null,
+    baitSequence: [],
+  };
+}
 export function newDocument(): GameDocument {
   return {
-    version: 1,
+    version: 2,
     spot: "reed",
     bait: "worm",
     power: 0.6,
@@ -9,7 +19,11 @@ export function newDocument(): GameDocument {
     seed: 48127,
     stock: { worm: 24, corn: 20, fly: 16 },
     bag: [],
-    journal: {},
+    facts: {},
+    observations: [],
+    coarse: [],
+    study: defaultStudy(),
+    journalPolicy: "coarse-new",
     stats: { casts: 0, catches: 0, escapes: 0, released: 0 },
     claimed: [],
   };
@@ -25,7 +39,8 @@ export function idleSession(): Session {
     bait: "worm",
     fish: null,
     weight: 0,
-    biteAt: 2,
+    castAt: 0,
+    biteAt: 0,
     progress: 0,
     tension: 0.35,
     energy: 1,

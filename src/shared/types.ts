@@ -31,8 +31,56 @@ export interface JournalEntry {
   best: number;
   first: number;
 }
+/**
+ * A settled capture fact. `legacy` counts come from the old v1 journal and
+ * carry no wait / bite / sequence evidence.
+ */
+export interface FishFact {
+  count: number;
+  best: number;
+  first: number;
+  legacy: number;
+}
+export type ObservationOutcome = "landed" | "lost" | "missed" | "retrieved";
+/** A full-precision observation fragment. */
+export interface FineObservation {
+  kind: "fine";
+  id: string;
+  spot: SpotId;
+  bait: BaitId;
+  castAt: number;
+  endAt: number;
+  waitMs: number;
+  outcome: ObservationOutcome;
+  fish?: FishId;
+  weight?: number;
+}
+/** A deliberately compressed observation group; exact times and order are gone. */
+export interface CoarseObservation {
+  kind: "coarse";
+  id: string;
+  dayStart: number;
+  dayEnd: number;
+  spot: SpotId;
+  bait: BaitId;
+  outcome: ObservationOutcome;
+  waitBucket: number;
+  waitMinMs: number;
+  waitMaxMs: number;
+  fish?: FishId;
+  count: number;
+}
+export type Observation = FineObservation | CoarseObservation;
+export interface StudyCriteria {
+  start: number | null;
+  end: number | null;
+  waitMinMs: number | null;
+  waitMaxMs: number | null;
+  baitSequence: BaitId[];
+}
+export type JournalPolicy = "coarse-new" | "compress-oldest";
 export interface GameDocument {
-  version: 1;
+  version: 2;
   spot: SpotId;
   bait: BaitId;
   power: number;
@@ -40,7 +88,11 @@ export interface GameDocument {
   seed: number;
   stock: Record<BaitId, number>;
   bag: Catch[];
-  journal: Partial<Record<FishId, JournalEntry>>;
+  facts: Partial<Record<FishId, FishFact>>;
+  observations: FineObservation[];
+  coarse: CoarseObservation[];
+  study: StudyCriteria;
+  journalPolicy: JournalPolicy;
   stats: { casts: number; catches: number; escapes: number; released: number };
   claimed: string[];
 }
@@ -54,6 +106,7 @@ export interface Session {
   bait: BaitId;
   fish: FishId | null;
   weight: number;
+  castAt: number;
   biteAt: number;
   progress: number;
   tension: number;
@@ -64,6 +117,20 @@ export interface Session {
   reeling: boolean;
   duration: number;
   message: string;
+}
+/** The v1 document only ever stored counts and best weights. */
+export interface GameDocumentV1 {
+  version: 1;
+  spot: SpotId;
+  bait: BaitId;
+  power: number;
+  drag: number;
+  seed: number;
+  stock: Record<BaitId, number>;
+  bag: Catch[];
+  journal: Partial<Record<FishId, { count: number; best: number; first: number }>>;
+  stats: { casts: number; catches: number; escapes: number; released: number };
+  claimed: string[];
 }
 export interface Workspace {
   doc: GameDocument;

@@ -1,5 +1,5 @@
 import type { GameDocument, Session, Catch } from "../../../shared/types";
-import { recordCatch } from "../lib/records";
+import { recordFact } from "../../journal/lib/facts";
 export function landCatch(
   doc: GameDocument,
   s: Session,
@@ -19,7 +19,7 @@ export function landCatch(
   return {
     ...doc,
     bag: [item, ...doc.bag],
-    journal: recordCatch(doc.journal, item),
+    facts: recordFact(doc.facts, item),
     stats: { ...doc.stats, catches: doc.stats.catches + 1 },
   };
 }

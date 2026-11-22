@@ -34,7 +34,7 @@ export const challenges: Challenge[] = [
     description: "发现 3 个不同鱼种",
     target: 3,
     reward: "博物手记",
-    measure: (d) => Object.keys(d.journal).length,
+    measure: (d) => Object.keys(d.facts).length,
   },
   {
     id: "deep",

@@ -69,9 +69,17 @@ export function FishingPanel({
           </button>
         )}
         {s.phase === "waiting" && (
-          <button className="primary" disabled>
-            等待咬钩…
-          </button>
+          <>
+            <button className="primary" disabled>
+              等待咬钩…
+            </button>
+            <button
+              className="text-btn timely"
+              onClick={() => send({ type: "retrieve" })}
+            >
+              提前收竿
+            </button>
+          </>
         )}
         {s.phase === "bite" && (
           <button

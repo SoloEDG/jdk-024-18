@@ -44,6 +44,8 @@ export function strike(s: Session): Session {
         ...s,
         phase: "fighting",
         clock: 0,
+        // The strike itself settles the wait; reaction time is not wait time.
+        biteAt: Math.min(s.clock, s.biteAt),
         message: "按住收线；张力过高时松开，让鱼线歇一歇。",
       }
     : s;
